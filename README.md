@@ -1,63 +1,117 @@
 # renovate-config
 
-Shared Renovate configuration for `gkzz` repositories.
+Shared Renovate configuration for repositories under `gkzz`.
 
-## Preset
+This repository defines the common dependency update policy used by Renovate-managed repositories.
 
-Use this preset from another repository with:
+## Usage
 
-```json
-{
-  "extends": ["github>gkzz/renovate-config"]
-}
-```
-
-The shared preset is defined in [`default.json`](./default.json).
-
-## Policy
-
-- Use Renovate's recommended defaults.
-- Pin Docker image digests.
-- Pin GitHub Actions to full commit SHAs while keeping the adjacent SemVer comment.
-- Use the `Asia/Tokyo` timezone.
-- Disable automerge by default.
-- Require dependency dashboard approval before updates are opened.
-- Require a 14 day minimum release age with strict internal checks.
-- Add PR review notes so stability, CI, release notes, and migration impact are checked before merge.
-- Group non-major GitHub Actions updates together.
-- Keep major GitHub Actions updates separate.
-- Add GitHub Actions specific PR body columns for update type, target, release timestamp, release age, and pending state.
-
-Vulnerability alert PRs are assigned to `gkzz`.
-
-## Self Monitoring
-
-This repository has its own [`renovate.json5`](./renovate.json5):
+Extend the shared preset from each repository's Renovate configuration:
 
 ```json5
 {
-  extends: ["github>gkzz/renovate-config"],
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+
+  extends: ["github>gkzz/renovate-config:default.json5"],
 }
 ```
 
-This follows the same shape as `cybozu/renovate-config`, where the repository's own Renovate config extends the shared preset it publishes.
+Repository-specific rules can be added alongside the shared preset:
+
+```json5
+{
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+
+  extends: ["github>gkzz/renovate-config:default.json5"],
+
+  packageRules: [
+    // Repository-specific rules.
+  ],
+}
+```
+
+## Shared policy
+
+The shared preset is defined in [`default.json5`](./default.json5).
+
+It provides the common Renovate policy, including:
+
+- Renovate's recommended configuration
+- Immutable Docker digest pinning
+- Immutable GitHub Actions commit SHA pinning with adjacent SemVer comments
+- Dependency Dashboard approval before creating update branches and pull requests
+- A 14-day minimum release age for routine updates
+- Manual merge decisions instead of Renovate automerge
+- Grouping of non-major GitHub Actions updates
+- Separation of major GitHub Actions updates
+- Additional release information in GitHub Actions pull requests
+- Prioritized handling of vulnerability alerts
+
+Repository-specific dependency grouping or file-specific rules should generally remain in the consuming repository unless they are intended to apply consistently across repositories.
+
+## Review policy
+
+Renovate pull requests are review candidates, not automatic approval to upgrade.
+
+Routine updates should generally be merged when:
+
+- the configured stability window has passed;
+- CI has passed;
+- release notes or changelog entries do not require migration work;
+- the resulting diff contains only the expected dependency, digest, lockfile, or workflow changes.
+
+Major updates require explicit review of breaking changes, migration instructions, runtime requirements, permissions, inputs, outputs, defaults, and other behavioral changes.
+
+Security updates should be reviewed with higher priority once their compatibility and impact are understood.
 
 ## Validation
 
-The GitHub Actions workflow is [`renovate-config.yml`](./.github/workflows/renovate-config.yml).
+Changes to this repository are validated by [`.github/workflows/validate.yml`](./.github/workflows/validate.yml).
 
-The file name is intentionally `renovate-config.yml` instead of a generic `test.yml` so the Actions list makes the workflow purpose clear.
+The workflow performs three complementary checks:
 
-The workflow:
+- validates GitHub Actions workflow files with `actionlint`;
+- validates the Renovate configuration with the pinned Renovate version;
+- runs Renovate in local dry-run mode to verify that configuration and dependency extraction can be processed successfully.
 
-- runs on pushes to `main` and `master`
-- runs on pull requests
-- uses Node.js 22.x
-- pins pnpm to `10.34.5`
-- validates both `default.json` and `renovate.json5`
+These checks are intended to catch configuration and workflow errors before changes to the shared preset are merged.
 
-The validation command is:
+## Repository responsibilities
 
-```sh
-pnpm dlx renovate@latest renovate-config-validator default.json renovate.json5
+This repository contains **shared Renovate policy only**.
+
+The execution environment for self-hosted Renovate is maintained separately in `gkzz/actions`.
+
+In other words:
+
+```text
+gkzz/renovate-config
+└── What Renovate should do
+    ├── update policy
+    ├── stability policy
+    ├── grouping
+    ├── Dependency Dashboard behavior
+    └── pull request presentation
+
+gkzz/actions
+└── How Renovate is executed
+    ├── GitHub Actions workflow
+    ├── GitHub App authentication
+    ├── Renovate runtime version
+    └── self-hosted/global configuration
 ```
+
+Settings that control the self-hosted Renovate process itself should not be added to the shared repository preset.
+
+## Repository-specific configuration
+
+Not every Renovate rule belongs in this repository.
+
+Keep a rule in the consuming repository when it depends on repository-specific details such as:
+
+- particular files or directories;
+- package managers used only by that repository;
+- dependency groups meaningful only to that repository;
+- repository-specific scheduling or update behavior.
+
+Move a rule into this shared preset when it represents a policy that should apply consistently across Renovate-managed repositories.
