@@ -1,6 +1,7 @@
 {
   $schema: "https://docs.renovatebot.com/renovate-schema.json",
-  // Renovate の推奨設定をベースに、Docker と GitHub Actions を不変な digest / commit SHA に固定する。
+  // Renovate の標準的な推奨設定をベースにする。
+  // Docker image は digest、GitHub Actions は full commit SHA に固定して再現性を確保する。
   extends: [
     "config:recommended",
     "docker:pinDigests",
