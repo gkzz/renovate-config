@@ -1,0 +1,90 @@
+{
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  // Renovate の推奨設定をベースに、Docker と GitHub Actions を不変な digest / commit SHA に固定する。
+  extends: [
+    "config:recommended",
+    "docker:pinDigests",
+    "helpers:pinGitHubActionDigestsToSemver",
+  ],
+
+  // schedule など日時に関する設定を日本時間として解釈する。
+  timezone: "Asia/Tokyo",
+
+  // Renovate による自動マージは行わず、マージ判断は人間に委ねる。
+  automerge: false,
+
+  // Dependency Dashboard を有効にし、dependency update の確認・承認キューとして使用する。
+  dependencyDashboard: true,
+
+  // 全ての dependency update は Dependency Dashboard での事前承認を必須化する。
+  // Dashboard のチェックボックスで承認した update のみ branch/PR が作成される。
+  dependencyDashboardApproval: true,
+
+  // Dependency Dashboard に共通のレビュー方針を表示する。
+  dependencyDashboardFooter: "## Update review policy\n\nUse the dashboard as a review queue. Branches and PRs are created only after approving updates from the dashboard. Merge candidates should satisfy the stability window, CI, and release-note checks. See `gkzz/renovate-config` for the shared Renovate review policy.",
+
+  // リリースから14日未満のバージョンは通常の更新候補として採用せず、安定化期間を設ける。
+  minimumReleaseAge: "14 days",
+
+  // minimumReleaseAge などの内部チェックが Pending の間は branch/PR を作成しない。
+  internalChecksFilter: "strict",
+
+  // 全 Renovate PR に共通のレビュー条件と共通レビューポリシーへの案内を表示する。
+  prBodyNotes: [
+    "Review checklist: stability window passed, CI passed, and release notes/changelog do not require migration work. See `gkzz/renovate-config` for the shared Renovate review policy.",
+  ],
+
+  // dependency の種類ごとに、グルーピング、major の分離、PR の表示内容を定義する。
+  packageRules: [
+    {
+      // GitHub Actions の minor / patch などの通常更新を1つのPRにまとめる。
+      // CI に関する変更をまとめてレビューできるようにする。
+      description: "Keep GitHub Actions non-major updates together so Codex can review one CI surface at a time.",
+      matchManagers: ["github-actions"],
+      matchUpdateTypes: ["minor", "patch", "pin", "digest"],
+      groupName: "GitHub Actions",
+      groupSlug: "github-actions",
+      prBodyNotes: [
+        "GitHub Actions stay pinned to full commit SHAs; Renovate tracks the adjacent SemVer comment. Check runtime, permissions, inputs, outputs, and workflow behavior before merging.",
+      ],
+    },
+
+    {
+      // GitHub Actions の major update は通常更新と混ぜず、breaking change を個別にレビューする。
+      description: "Keep GitHub Actions major updates separate from routine CI maintenance.",
+      matchManagers: ["github-actions"],
+      matchUpdateTypes: ["major"],
+      groupName: "GitHub Actions major",
+      groupSlug: "github-actions-major",
+      prBodyNotes: [
+        "Major GitHub Actions updates require explicit review of breaking changes, migration notes, runtime, tokens, permissions, inputs, outputs, and workflow behavior.",
+      ],
+    },
+
+    {
+      // GitHub Actions の PR に、更新判断に必要なバージョン・リリース日時・経過日数を表示する。
+      matchManagers: ["github-actions"],
+      prBodyColumns: [
+        "Package",
+        "Update type",
+        "Current -> Target",
+        "Release timestamp",
+        "Release age",
+        "Pending",
+      ],
+      prBodyDefinitions: {
+        "Update type": "`{{{updateType}}}`",
+        "Current -> Target": "`{{{displayFrom}}}` -> `{{{displayTo}}}`",
+        "Release timestamp": "{{#if releaseTimestamp}}`{{{releaseTimestamp}}}`{{else}}n/a{{/if}}",
+        "Release age": "{{#if releaseTimestamp}}`{{{newVersionAgeInDays}}} days`{{else}}n/a{{/if}}",
+        Pending: "{{#if displayPending}}{{{displayPending}}}{{else}}-{{/if}}",
+      },
+    },
+  ],
+
+  // 脆弱性対応は通常の minimumReleaseAge を待たず、
+  // Renovate が検出した時点で優先的に対応できるよう担当者を割り当てる。
+  vulnerabilityAlerts: {
+    assignees: ["gkzz"],
+  },
+}
