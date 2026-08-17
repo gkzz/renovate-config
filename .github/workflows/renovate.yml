@@ -1,0 +1,18 @@
+name: Renovate
+
+on:
+  schedule:
+    # Runs at 03:00 JST.
+    - cron: "0 18 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  renovate:
+    uses: gkzz/actions/.github/workflows/reusable-renovate-workflow.yml@main
+    with:
+      mode: run
+    secrets:
+      RENOVATE_APP_PRIVATE_KEY: ${{ secrets.RENOVATE_APP_PRIVATE_KEY }}
