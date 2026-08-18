@@ -1,65 +1,39 @@
 name: Validate
 
 on:
+  pull_request:
+    paths:
+      - .github/workflows/*.yml
+      - default.json5
+      - renovate.json5
   push:
     branches:
       - main
-      - master
-  pull_request:
+    paths:
+      - .github/workflows/*.yml
+      - default.json5
+      - renovate.json5
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
   actionlint:
-    name: Validate workflows
     runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
 
-      - name: Run actionlint
+      - name:
+          Check workflow files
+          # https://github.com/rhysd/actionlint/blob/v1.7.12/docs/usage.md#use-actionlint-on-github-actions
         uses: docker://rhysd/actionlint:1.7.12@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667
         with:
           args: -color
 
-  renovate-config:
-    name: Validate Renovate config
-    runs-on: ubuntu-24.04
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
-
-      - name: Validate Renovate config
-        uses: renovatebot/github-action@e09d604f8f803bb527bd8321ed5be06c460b8682 # v46.2.2
-        with:
-          docker-cmd-file: .github/renovate-entrypoint.sh
-          docker-volumes: >-
-            /tmp:/tmp;
-            ${{ github.workspace }}:/workspace
-          renovate-version: 44.17.1@sha256:90759c92793143ae7db68cd14e690109d8ace3527e17c7d188c96a1ad628282e
-          token: ${{ github.token }}
-
-  renovate-dry-run:
-    name: Run Renovate dry run
-    runs-on: ubuntu-24.04
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
-
-      # Dry run は Renovate 本体の設定解釈と dependency extraction の検証に限定する。
-      # GitHub 認証や self-hosted 実行基盤は検証対象ではないため、
-      # renovatebot/github-action を介さず、Renovate image を local platform で直接実行する。
-      - name: Run Renovate dry run
-        uses: docker://ghcr.io/renovatebot/renovate:44.17.1@sha256:90759c92793143ae7db68cd14e690109d8ace3527e17c7d188c96a1ad628282e
-        env:
-          RENOVATE_CONFIG: |
-            {
-              "platform": "local",
-              "onboarding": false,
-              "requireConfig": "optional",
-              "dryRun": "extract"
-            }
+  renovate:
+    uses: gkzz/actions/.github/workflows/reusable-renovate-workflow.yml@main
+    with:
+      mode: check

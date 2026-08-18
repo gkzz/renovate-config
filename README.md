@@ -68,19 +68,21 @@ Security updates should be reviewed with higher priority once their compatibilit
 
 Changes to this repository are validated by [`.github/workflows/validate.yml`](./.github/workflows/validate.yml).
 
-The workflow performs three complementary checks:
+The workflow performs two complementary checks:
 
 - validates GitHub Actions workflow files with `actionlint`;
-- validates the Renovate configuration with the pinned Renovate version;
-- runs Renovate in local dry-run mode to verify that configuration and dependency extraction can be processed successfully.
+- calls the shared Renovate workflow from `gkzz/actions` with `mode: check`, which validates the Renovate configuration and runs Renovate in local dry-run mode.
 
 These checks are intended to catch configuration and workflow errors before changes to the shared preset are merged.
+
+Renovate itself is run by [`.github/workflows/renovate.yml`](./.github/workflows/renovate.yml), which calls the same shared workflow with `mode: run`.
+`mode: run` requires the repository variable `RENOVATE_APP_ID` and the secret `RENOVATE_APP_PRIVATE_KEY`.
 
 ## Repository responsibilities
 
 This repository contains **shared Renovate policy only**.
 
-The execution environment for self-hosted Renovate is maintained separately in `gkzz/actions`.
+The execution environment for self-hosted Renovate is maintained separately in [gkzz/actions](https://github.com/gkzz/actions) .
 
 In other words:
 
