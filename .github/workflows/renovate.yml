@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   renovate:
-    uses: gkzz/actions/.github/workflows/reusable-renovate-workflow.yml@main
+    uses: gkzz/actions/.github/workflows/reusable-renovate-workflow.yml@992d9ee2638689ff1f239bece468400e10dc5c27
     with:
       mode: run
     secrets:
