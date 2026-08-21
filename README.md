@@ -71,39 +71,29 @@ Changes to this repository are validated by [`.github/workflows/validate.yml`](.
 The workflow performs two complementary checks:
 
 - validates GitHub Actions workflow files with `actionlint`;
-- calls the shared Renovate workflow from `gkzz/actions` with `mode: check`, which validates the Renovate configuration and runs Renovate in local dry-run mode.
+- validates [`default.json5`](./default.json5) and [`renovate.json5`](./renovate.json5) with `renovate-config-validator`.
 
 These checks are intended to catch configuration and workflow errors before changes to the shared preset are merged.
 
-Renovate itself is run by [`.github/workflows/renovate.yml`](./.github/workflows/renovate.yml), which calls the same shared workflow with `mode: run`.
-`mode: run` requires the repository variable `RENOVATE_APP_ID` and the secret `RENOVATE_APP_PRIVATE_KEY`.
+Renovate itself is not run from this repository. Dependency update pull requests are expected to be created by Mend-hosted Renovate.
 
 ## Repository responsibilities
 
 This repository contains **shared Renovate policy only**.
 
-The execution environment for self-hosted Renovate is maintained separately in [gkzz/actions](https://github.com/gkzz/actions) .
-
 In other words:
 
 ```text
 gkzz/renovate-config
-└── What Renovate should do
-    ├── update policy
-    ├── stability policy
-    ├── grouping
-    ├── Dependency Dashboard behavior
-    └── pull request presentation
+  ├─ shared Renovate policy
+  └─ validate shared presets
 
-gkzz/actions
-└── How Renovate is executed
-    ├── GitHub Actions workflow
-    ├── GitHub App authentication
-    ├── Renovate runtime version
-    └── self-hosted/global configuration
+repository using the preset
+  ├─ repository-specific Renovate config
+  └─ validate repository config
 ```
 
-Settings that control the self-hosted Renovate process itself should not be added to the shared repository preset.
+Settings that depend on Mend-hosted Renovate execution should not be added to the shared repository preset.
 
 ## Repository-specific configuration
 

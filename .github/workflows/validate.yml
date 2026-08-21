@@ -26,14 +26,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
 
-      - name:
-          Check workflow files
-          # https://github.com/rhysd/actionlint/blob/v1.7.12/docs/usage.md#use-actionlint-on-github-actions
+      - name: Check workflow files
+        # https://github.com/rhysd/actionlint/blob/v1.7.12/docs/usage.md#use-actionlint-on-github-actions
         uses: docker://rhysd/actionlint:1.7.12@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667
         with:
           args: -color
 
-  renovate:
-    uses: gkzz/actions/.github/workflows/reusable-renovate-workflow.yml@992d9ee2638689ff1f239bece468400e10dc5c27
-    with:
-      mode: check
+  renovate-validate-config:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+
+      - name: Validate Renovate config
+        uses: docker://ghcr.io/renovatebot/renovate:44.17.1@sha256:90759c92793143ae7db68cd14e690109d8ace3527e17c7d188c96a1ad628282e
+        with:
+          entrypoint: renovate-config-validator
+          args: --no-global default.json5 renovate.json5
