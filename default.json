@@ -1,0 +1,3 @@
+{
+  "extends": ["github>gkzz/renovate-config:renovate.json5"]
+}
