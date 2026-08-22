@@ -27,7 +27,7 @@
   fetchChangeLogs: "pr",
 
   // Dependency Dashboard に共通のレビュー方針を表示する。
-  dependencyDashboardFooter: "## Update review policy\n\nUse the dashboard as a review queue. Branches and PRs are created only after approving updates from the dashboard. Merge candidates should satisfy the stability window, CI, release-note/changelog checks, and an explicit need/risk judgment. See `gkzz/renovate-config` for the shared Renovate review policy.",
+  dependencyDashboardFooter: "## Update review policy\n\nUse the dashboard as a review queue. Branches and PRs are created only after approving updates from the dashboard. Merge candidates should satisfy the stability window, CI, release-note/changelog checks, and an explicit need/risk judgment. See [gkzz/renovate-config](https://github.com/gkzz/renovate-config) for the shared Renovate review policy.",
 
   // リリースから14日未満のバージョンは通常の更新候補として採用せず、安定化期間を設ける。
   minimumReleaseAge: "14 days",
@@ -37,7 +37,7 @@
 
   // 全 Renovate PR に共通のレビュー条件と共通レビューポリシーへの案内を表示する。
   prBodyNotes: [
-    "Review checklist: stability window passed, CI passed, release notes/changelog checked for the current -> target version range, and the update need/risk level is explicit. See `gkzz/renovate-config` for the shared Renovate review policy.",
+    "Review checklist: stability window passed, CI passed, release notes/changelog checked for the current -> target version range, and the update need/risk level is explicit. See [gkzz/renovate-config](https://github.com/gkzz/renovate-config) for the shared Renovate review policy.",
   ],
 
   // dependency の種類ごとに、グルーピング、major の分離、PR の表示内容を定義する。
