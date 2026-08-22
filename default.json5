@@ -63,8 +63,8 @@
     },
 
     {
-      // GitHub Actions の PR に、更新判断に必要なバージョン・リリース日時・経過日数を表示する。
-      matchManagers: ["github-actions"],
+      // 更新判断に必要なバージョン・リリース日時・経過日数を表示する。
+      matchManagers: ["github-actions", "mise"],
       prBodyColumns: [
         "Package",
         "Update type",
