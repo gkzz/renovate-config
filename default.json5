@@ -21,8 +21,12 @@
   // Dashboard のチェックボックスで承認した update のみ branch/PR が作成される。
   dependencyDashboardApproval: true,
 
+  // PR 本文に changelog / release notes を取得して表示する。
+  // 取得できない package では、PR 表の source 情報と手動確認で補完する。
+  fetchChangeLogs: "pr",
+
   // Dependency Dashboard に共通のレビュー方針を表示する。
-  dependencyDashboardFooter: "## Update review policy\n\nUse the dashboard as a review queue. Branches and PRs are created only after approving updates from the dashboard. Merge candidates should satisfy the stability window, CI, and release-note checks. See `gkzz/renovate-config` for the shared Renovate review policy.",
+  dependencyDashboardFooter: "## Update review policy\n\nUse the dashboard as a review queue. Branches and PRs are created only after approving updates from the dashboard. Merge candidates should satisfy the stability window, CI, release-note/changelog checks, and an explicit need/risk judgment. See `gkzz/renovate-config` for the shared Renovate review policy.",
 
   // リリースから14日未満のバージョンは通常の更新候補として採用せず、安定化期間を設ける。
   minimumReleaseAge: "14 days",
@@ -32,7 +36,7 @@
 
   // 全 Renovate PR に共通のレビュー条件と共通レビューポリシーへの案内を表示する。
   prBodyNotes: [
-    "Review checklist: stability window passed, CI passed, and release notes/changelog do not require migration work. See `gkzz/renovate-config` for the shared Renovate review policy.",
+    "Review checklist: stability window passed, CI passed, release notes/changelog checked for the current -> target version range, and the update need/risk level is explicit. See `gkzz/renovate-config` for the shared Renovate review policy.",
   ],
 
   // dependency の種類ごとに、グルーピング、major の分離、PR の表示内容を定義する。
@@ -63,29 +67,36 @@
     },
 
     {
-      // 更新判断に必要なバージョン・リリース日時・経過日数を表示する。
+      // 更新判断に必要なバージョン・リリース日時・経過日数・changelog 有無・温度感を表示する。
       matchManagers: ["github-actions", "mise"],
       prBodyColumns: [
         "Package",
         "Update type",
         "Current -> Target",
-        "Release timestamp",
-        "Release age",
+        "Current age",
+        "Target released",
+        "Target age",
+        "Changelog",
+        "Review stance",
         "Pending",
       ],
       prBodyDefinitions: {
         "Update type": "`{{{updateType}}}`",
         "Current -> Target": "`{{{displayFrom}}}` -> `{{{displayTo}}}`",
-        "Release timestamp": "{{#if releaseTimestamp}}`{{{releaseTimestamp}}}`{{else}}n/a{{/if}}",
-        "Release age": "{{#if releaseTimestamp}}`{{{newVersionAgeInDays}}} days`{{else}}n/a{{/if}}",
+        "Current age": "{{#if currentVersionTimestamp}}`{{{currentVersionAgeInDays}}} days`{{else}}n/a{{/if}}",
+        "Target released": "{{#if releaseTimestamp}}`{{{releaseTimestamp}}}`{{else}}n/a{{/if}}",
+        "Target age": "{{#if releaseTimestamp}}`{{{newVersionAgeInDays}}} days`{{else}}n/a{{/if}}",
+        Changelog: "{{#if hasReleaseNotes}}included below{{else}}{{#if sourceUrl}}check {{{sourceUrl}}}{{else}}n/a{{/if}}{{/if}}",
+        "Review stance": "{{#if vulnerabilitySeverity}}security: prioritize{{else}}{{#if isMajor}}major: migration review{{else}}{{#if isMinor}}minor: value/risk check{{else}}routine: low temperature{{/if}}{{/if}}{{/if}}",
         Pending: "{{#if displayPending}}{{{displayPending}}}{{else}}-{{/if}}",
       },
     },
   ],
 
-  // 脆弱性対応は通常の minimumReleaseAge を待たず、
-  // Renovate が検出した時点で優先的に対応できるよう担当者を割り当てる。
+  // 脆弱性の検知・判断は GitHub の Security -> Dependabot に寄せる。
+  // Renovate の vulnerabilityAlerts は security PR を即時作成し得るため無効化する。
+  // https://docs.renovatebot.com/configuration-options/#vulnerabilityalerts
   vulnerabilityAlerts: {
-    assignees: ["gkzz"],
+    enabled: false,
   },
 }

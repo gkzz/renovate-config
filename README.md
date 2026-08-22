@@ -40,12 +40,14 @@ It provides the common Renovate policy, including:
 - Immutable Docker digest pinning
 - Immutable GitHub Actions commit SHA pinning with adjacent SemVer comments
 - Dependency Dashboard approval before creating update branches and pull requests
+- Pull request changelog/release-note fetching
 - A 14-day minimum release age for routine updates
 - Manual merge decisions instead of Renovate automerge
 - Grouping of non-major GitHub Actions updates
 - Separation of major GitHub Actions updates
-- Additional release information in GitHub Actions pull requests
-- Prioritized handling of vulnerability alerts
+- Additional review context in GitHub Actions and mise pull requests, including version range, current version age, target release age, changelog availability, and review stance
+- Repository-side GitHub Dependabot alerts as the vulnerability detection and review surface
+- Disabled Renovate vulnerability-alert pull requests to avoid automatic security PRs from alert data alone
 
 Repository-specific dependency grouping or file-specific rules should generally remain in the consuming repository unless they are intended to apply consistently across repositories.
 
@@ -57,12 +59,15 @@ Routine updates should generally be merged when:
 
 - the configured stability window has passed;
 - CI has passed;
-- release notes or changelog entries do not require migration work;
+- release notes or changelog entries for the current-to-target version range do not require migration work;
+- the need for the update is clear enough for its risk level, such as security priority, major-version migration value, minor-version feature or maintenance value, or routine patch/digest maintenance;
 - the resulting diff contains only the expected dependency, digest, lockfile, or workflow changes.
 
 Major updates require explicit review of breaking changes, migration instructions, runtime requirements, permissions, inputs, outputs, defaults, and other behavioral changes.
 
-Security updates should be reviewed with higher priority once their compatibility and impact are understood.
+Security alerts should be reviewed in GitHub's Security -> Dependabot view. Dependency updates that remediate those alerts should still be reviewed through the normal Renovate pull request flow unless a maintainer decides to handle an alert manually.
+
+Renovate vulnerability-alert pull requests are disabled in this shared preset because they bypass the routine update stability window and Dependency Dashboard approval. Each consuming repository should keep GitHub Dependabot alerts and malware alerts enabled for detection, while keeping Dependabot security updates and Dependabot version updates disabled to avoid automatic pull requests outside Renovate's routine update flow.
 
 ## Validation
 
