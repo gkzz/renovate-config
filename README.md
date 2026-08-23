@@ -12,7 +12,7 @@ Extend the shared preset from each repository's Renovate configuration:
 {
   $schema: "https://docs.renovatebot.com/renovate-schema.json",
 
-  extends: ["github>gkzz/renovate-config:default.json5"],
+  extends: ["github>gkzz/renovate-config"],
 }
 ```
 
@@ -22,7 +22,7 @@ Repository-specific rules can be added alongside the shared preset:
 {
   $schema: "https://docs.renovatebot.com/renovate-schema.json",
 
-  extends: ["github>gkzz/renovate-config:default.json5"],
+  extends: ["github>gkzz/renovate-config"],
 
   packageRules: [
     // Repository-specific rules.
@@ -32,7 +32,7 @@ Repository-specific rules can be added alongside the shared preset:
 
 ## Shared policy
 
-The shared preset is defined in [`default.json5`](./default.json5).
+The shared preset entry point is [`default.json`](./default.json), which extends the policy implemented in [`renovate.json5`](./renovate.json5).
 
 It provides the common Renovate policy, including:
 
@@ -76,7 +76,7 @@ Changes to this repository are validated by [`.github/workflows/validate.yml`](.
 The workflow performs two complementary checks:
 
 - validates GitHub Actions workflow files with `actionlint`;
-- validates [`default.json5`](./default.json5) and [`renovate.json5`](./renovate.json5) with `renovate-config-validator`.
+- validates [`default.json`](./default.json) and [`renovate.json5`](./renovate.json5) with `renovate-config-validator`.
 
 These checks are intended to catch configuration and workflow errors before changes to the shared preset are merged.
 
