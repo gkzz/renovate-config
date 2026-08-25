@@ -4,13 +4,19 @@
   // Docker image は digest、GitHub Actions は full commit SHA に固定して再現性を確保する。
   extends: [
     "config:recommended",
-    ":label(renovate)",
     "docker:pinDigests",
     "helpers:pinGitHubActionDigestsToSemver",
   ],
 
+  // PR のラベル指定
+  labels: ["renovate", "dependencies"],
+
   // schedule など日時に関する設定を日本時間として解釈する。
   timezone: "Asia/Tokyo",
+
+  // 下記を参考に月曜いっぱいとする。
+  // https://zenn.dev/studist/articles/rethinking-renovate-config-for-security
+  schedule: ["on monday"],
 
   // Renovate による自動マージは行わず、マージ判断は人間に委ねる。
   automerge: false,
