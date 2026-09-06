@@ -40,6 +40,8 @@ It provides the common Renovate policy, including:
 - Immutable Docker digest pinning
 - Immutable GitHub Actions commit SHA pinning with adjacent SemVer comments
 - Dependency Dashboard approval before creating update branches and pull requests
+- Weekly lockfile maintenance on Monday
+- Grouping of manually pinned mise toolchain updates
 - Pull request changelog/release-note fetching
 - A 14-day minimum release age for routine updates
 - Manual merge decisions instead of Renovate automerge

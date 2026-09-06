@@ -18,6 +18,13 @@
   // https://zenn.dev/studist/articles/rethinking-renovate-config-for-security
   schedule: ["on monday"],
 
+  // lockfile は Renovate 全体の schedule と同じく、月曜に定期更新する。
+  // schedule は上記の timezone: "Asia/Tokyo" で解釈する。
+  lockFileMaintenance: {
+    enabled: true,
+    schedule: ["on monday"],
+  },
+
   // Renovate による自動マージは行わず、マージ判断は人間に委ねる。
   automerge: false,
 
@@ -48,6 +55,14 @@
 
   // dependency の種類ごとに、グルーピング、major の分離、PR の表示内容を定義する。
   packageRules: [
+    {
+      // 手動固定している local / CI toolchain の更新をまとめてレビューできるようにする。
+      description: "Group manually pinned local/CI toolchain versions.",
+      matchManagers: ["mise"],
+      groupName: "toolchain",
+      groupSlug: "toolchain",
+    },
+
     {
       // GitHub Actions の minor / patch などの通常更新を1つのPRにまとめる。
       // CI に関する変更をまとめてレビューできるようにする。
