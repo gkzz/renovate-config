@@ -34,22 +34,7 @@ Repository-specific rules can be added alongside the shared preset:
 
 The shared preset entry point is [`default.json`](./default.json), which extends the policy implemented in [`renovate.json5`](./renovate.json5).
 
-It provides the common Renovate policy, including:
-
-- Renovate's recommended configuration
-- Immutable Docker digest pinning
-- Immutable GitHub Actions commit SHA pinning with adjacent SemVer comments
-- Dependency Dashboard approval before creating update branches and pull requests
-- Weekly lockfile maintenance on Monday
-- Grouping of manually pinned mise toolchain updates
-- Pull request changelog/release-note fetching
-- A 14-day minimum release age for routine updates
-- Manual merge decisions instead of Renovate automerge
-- Grouping of non-major GitHub Actions updates
-- Separation of major GitHub Actions updates
-- Additional review context in GitHub Actions and mise pull requests, including version range, current version age, target release age, changelog availability, and review stance
-- Repository-side GitHub Dependabot alerts as the vulnerability detection and review surface
-- Disabled Renovate vulnerability-alert pull requests to avoid automatic security PRs from alert data alone
+[`renovate.json5`](./renovate.json5) is the source of truth for the shared Renovate policy. It contains the actual preset configuration and inline comments explaining the intent of each shared rule.
 
 Repository-specific dependency grouping or file-specific rules should generally remain in the consuming repository unless they are intended to apply consistently across repositories.
 
