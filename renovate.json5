@@ -21,7 +21,6 @@
   // lockfile の定期メンテナンスを無効にする。
   lockFileMaintenance: {
     enabled: false,
-    schedule: ["on monday"],
   },
 
   // Renovate による自動マージは行わず、マージ判断は人間に委ねる。
