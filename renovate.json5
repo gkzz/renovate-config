@@ -18,10 +18,9 @@
   // https://zenn.dev/studist/articles/rethinking-renovate-config-for-security
   schedule: ["on monday"],
 
-  // lockfile は Renovate 全体の schedule と同じく、月曜に定期更新する。
-  // schedule は上記の timezone: "Asia/Tokyo" で解釈する。
+  // lockfile の定期メンテナンスを無効にする。
   lockFileMaintenance: {
-    enabled: true,
+    enabled: false,
     schedule: ["on monday"],
   },
 
