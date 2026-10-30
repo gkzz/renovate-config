@@ -36,6 +36,21 @@ The shared preset entry point is [`default.json`](./default.json), which extends
 
 [`renovate.json5`](./renovate.json5) is the source of truth for the shared Renovate policy. It contains the actual preset configuration and inline comments explaining the intent of each shared rule.
 
+## Weekly Codex review
+
+[`Renovate Weekly Review`](./.github/workflows/renovate-weekly-review.yml) runs once a week after the shared Monday Renovate window and can also be started manually.
+
+The workflow collects open Renovate Dependency Dashboard issues and open Renovate pull requests, asks Codex to evaluate them, and writes or updates a marker comment on each target:
+
+- Dependency Dashboard issues get a recommendation about whether pending updates should be approved for PR creation.
+- Renovate pull requests get a recommendation about whether they are merge candidates, should be held, or need manual checking.
+
+The workflow does not merge pull requests, approve reviews, close issues, edit labels, or check Dependency Dashboard boxes. It only comments with review guidance.
+
+By default, the workflow reviews this repository. To review other repositories, set the repository variable `RENOVATE_REVIEW_REPOSITORIES` to a comma-, space-, or newline-separated list such as `gkzz/example gkzz/another-example`, or pass `repositories` when running the workflow manually.
+
+For cross-repository comments, add a repository secret named `RENOVATE_REVIEW_TOKEN` with permission to read issues and pull requests and write issue comments in the target repositories. The workflow also requires `OPENAI_API_KEY` for `openai/codex-action`.
+
 Repository-specific dependency grouping or file-specific rules should generally remain in the consuming repository unless they are intended to apply consistently across repositories.
 
 ## Review policy
