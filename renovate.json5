@@ -9,7 +9,7 @@
   ],
 
   // PR のラベル指定
-  labels: ["renovate", "dependencies"],
+  labels: ["renovate", "Type: Dependencies"],
 
   // schedule など日時に関する設定を日本時間として解釈する。
   timezone: "Asia/Tokyo",
