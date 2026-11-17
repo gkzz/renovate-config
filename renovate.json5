@@ -70,7 +70,7 @@
       groupName: "GitHub Actions",
       groupSlug: "github-actions",
       prBodyNotes: [
-        "GitHub Actions stay pinned to full commit SHAs; Renovate tracks the adjacent SemVer comment. Check runtime, permissions, inputs, outputs, and workflow behavior before merging.",
+        "Check resolved action commits (inline SHAs or actions.lock), runtime, permissions, inputs, outputs, and workflow behavior before merging.",
       ],
     },
 
