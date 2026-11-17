@@ -2,13 +2,12 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "packageRules": [
     {
-      "description": "Keep action and reusable workflow refs readable while actions.lock records their commits.",
+      "description": "Keep step action refs readable while actions.lock records their commits.",
       "matchManagers": [
         "github-actions"
       ],
       "matchDepTypes": [
-        "action",
-        "workflow"
+        "action"
       ],
       "pinDigests": false
     }

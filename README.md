@@ -45,8 +45,10 @@ Repositories using `.github/workflows/actions.lock` can opt in to the
 ```
 
 The default preset continues to pin actions inline. The optional preset keeps
-repository actions and reusable workflows on version refs instead; Docker digest
-pinning is unchanged. Existing inline SHAs are migrated when onboarding the
+step actions on version refs instead. Reusable workflow call refs retain the
+default inline pinning policy because `gh-actions-lock` does not lock those call
+refs; their internal action dependencies are covered by the called repository's
+lockfile. Docker digest pinning is unchanged. Existing inline SHAs are migrated when onboarding the
 repository with `gh actions-lock`.
 
 Renovate automatically regenerates an existing `actions.lock` when updating an
