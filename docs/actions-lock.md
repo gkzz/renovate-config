@@ -1,7 +1,19 @@
 # GitHub Actions lockfiles
 
-The optional `actions-lock` preset keeps step actions on version tags while `.github/workflows/actions.lock` records their resolved commits.
-Docker images and reusable workflow call references keep the default digest pinning policy.
+The optional `actions-lock` preset tracks the extension version used by verification workflows.
+Renovate's built-in lockfile support controls inline digest pinning for onboarded workflows.
+The preset does not disable digest pinning; repositories without compatible lockfile support keep the default pinning policy.
+
+## Runtime requirements
+
+Use a Renovate runtime with native `actions.lock` regeneration support.
+CI checks the required extraction behavior with Renovate 44.206.2; the old validator version, 44.17.1, predates this feature.
+Schema validation alone does not prove lockfile regeneration works.
+
+The version of Mend-hosted Renovate is controlled by the service, independently of this repository's CI image.
+Before merging a rollout, confirm the hosted version from its job logs and inspect a real dependency update PR.
+That PR must update the action reference and lockfile together and pass `gh actions-lock --verify`.
+This hosted update check has not yet been completed for the consuming repositories.
 
 ## Setup
 
@@ -45,7 +57,8 @@ Set `constraints.ghActionsLock` in the consuming repository only when it needs a
 
 ## Reusable workflows
 
-`gh-actions-lock` does not lock reusable workflow call references, so the preset keeps inline SHA pinning for those references.
+`gh-actions-lock` does not lock reusable workflow call references.
+Keep remote reusable workflow calls pinned to full commit SHAs and review those references separately.
 The called repository's lockfile covers the actions inside its reusable workflow.
 
 See the [Renovate manager documentation](https://docs.renovatebot.com/modules/manager/github-actions/#github-actions-lockfile-actionslock) for support details.
