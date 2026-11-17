@@ -30,6 +30,43 @@ Repository-specific rules can be added alongside the shared preset:
 }
 ```
 
+## GitHub Actions lockfiles
+
+Repositories using `.github/workflows/actions.lock` can opt in to the
+[`actions-lock`](./actions-lock.json) preset **after** the default preset:
+
+```json5
+{
+  extends: [
+    "github>gkzz/renovate-config",
+    "github>gkzz/renovate-config:actions-lock",
+  ],
+}
+```
+
+The default preset continues to pin actions inline. The optional preset keeps
+repository actions and reusable workflows on version refs instead; Docker digest
+pinning is unchanged. Existing inline SHAs are migrated when onboarding the
+repository with `gh actions-lock`.
+
+Renovate automatically regenerates an existing `actions.lock` when updating an
+action, including dependencies inside local composite actions. No custom
+post-upgrade command is needed. See the
+[GitHub Actions manager documentation](https://docs.renovatebot.com/modules/manager/github-actions/#github-actions-lockfile-actionslock)
+for the current support status and requirements.
+
+Each consuming repository must generate and commit its initial lockfile and add
+CI running `gh actions-lock --verify`. Use `$/` references for same-repository
+actions whose remote dependencies must be locked. Manual workflow changes and new
+workflows still require running `gh actions-lock` and committing its output.
+
+The optional preset also tracks the extension version in workflow commands of the
+form `gh extension install github/gh-actions-lock --pin v0.4.1`. These updates
+retain the shared release-age, Dashboard approval, and manual merge policies.
+Renovate selects its own supported extension version for lockfile regeneration;
+set `constraints.ghActionsLock` in a consuming repository only if it needs a
+specific version.
+
 ## Shared policy
 
 The shared preset entry point is [`default.json`](./default.json), which extends the policy implemented in [`renovate.json5`](./renovate.json5).
@@ -63,7 +100,7 @@ Changes to this repository are validated by [`.github/workflows/validate.yml`](.
 The workflow performs two complementary checks:
 
 - validates GitHub Actions workflow files with `actionlint`;
-- validates [`default.json`](./default.json) and [`renovate.json5`](./renovate.json5) with `renovate-config-validator`.
+- validates [`default.json`](./default.json), [`renovate.json5`](./renovate.json5), and [`actions-lock.json`](./actions-lock.json) with `renovate-config-validator`.
 
 These checks are intended to catch configuration and workflow errors before changes to the shared preset are merged.
 
