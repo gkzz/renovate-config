@@ -2,7 +2,7 @@
 
 This repository records action dependencies in `.github/workflows/actions.lock`.
 
-- Renovate uses the shared `github>gkzz/renovate-config:actions-lock` preset to update action versions and the lockfile together.
+- This repository applies the shared `github>gkzz/renovate-config:actions-lock` preset. Confirm that the first Renovate action update also updates the lockfile before merging it.
 - Review the workflow changes and resolved commits before merging.
 - The verification workflow checks the lockfile on pull requests, pushes to `main`, and manual dispatches.
 

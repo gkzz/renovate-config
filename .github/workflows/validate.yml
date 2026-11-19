@@ -2,21 +2,9 @@ name: Validate
 
 on:
   pull_request:
-    paths:
-      - .github/workflows/*.yml
-      - default.json
-      - renovate.json
-      - actions-lock.json
-      - renovate.json5
   push:
     branches:
       - main
-    paths:
-      - .github/workflows/*.yml
-      - default.json
-      - renovate.json
-      - actions-lock.json
-      - renovate.json5
   workflow_dispatch:
 
 permissions:
@@ -28,7 +16,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        uses: actions/checkout@v7.0.1
 
       - name: Check workflow files
         # https://github.com/rhysd/actionlint/blob/v1.7.12/docs/usage.md#use-actionlint-on-github-actions
@@ -41,7 +29,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        uses: actions/checkout@v7.0.1
 
       - name: Validate Renovate config
         uses: docker://ghcr.io/renovatebot/renovate:44.206.2@sha256:d515a99f5d14d1c62b792ee61339d165dd9d20ee82ca9d5379daf639050bab51
