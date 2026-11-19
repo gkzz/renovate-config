@@ -30,7 +30,9 @@ The default preset pins actions inline to commit SHAs.
 Repositories using `actions.lock` can also extend the optional [`actions-lock`](actions-lock.json) preset.
 See [the lockfile guide](docs/actions-lock.md) for setup and updates.
 
+このリポジトリ自身も [renovate.json](renovate.json) で両方の preset を適用し、[actions.lock](.github/workflows/actions.lock) と[検証 CI](.github/workflows/verify-lockfile.yml) を管理します。運用手順は[ガイド](docs/actions-lock.md)を参照してください。
+
 ## Validation
 
-[CI](.github/workflows/validate.yml) runs `actionlint` and validates all three preset files with `renovate-config-validator`.
+[CI](.github/workflows/validate.yml) runs `actionlint` and validates all three preset files and this repository's `renovate.json` with `renovate-config-validator`.
 Check each consuming repository's Renovate configuration with the validator.
