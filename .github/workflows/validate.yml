@@ -35,4 +35,4 @@ jobs:
         uses: docker://ghcr.io/renovatebot/renovate:44.206.2@sha256:d515a99f5d14d1c62b792ee61339d165dd9d20ee82ca9d5379daf639050bab51
         with:
           entrypoint: renovate-config-validator
-          args: --no-global default.json renovate.json5 actions-lock.json renovate.json
+          args: --no-global default.json renovate.json5 actions-lock.json node-preset.json5 renovate.json

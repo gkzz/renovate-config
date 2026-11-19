@@ -32,7 +32,25 @@ See [the lockfile guide](docs/actions-lock.md) for setup and updates.
 
 このリポジトリ自身も [renovate.json](renovate.json) で両方の preset を適用し、[actions.lock](.github/workflows/actions.lock) と[検証 CI](.github/workflows/verify-lockfile.yml) を管理します。運用手順は[ガイド](docs/actions-lock.md)を参照してください。
 
+## Node.js
+
+Repositories managing Node.js with mise can extend the optional [`node-preset.json5`](node-preset.json5) preset after the default preset:
+
+```json5
+{
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  extends: [
+    "github>gkzz/renovate-config",
+    "github>gkzz/renovate-config:node-preset.json5",
+  ],
+}
+```
+
+This preset disables Node.js major updates and separates patch and minor updates from the shared toolchain group.
+Approve minor updates in the Dependency Dashboard after reviewing patch updates.
+When adopting this preset in `gkzz/renodash`, remove the two equivalent Node.js rules from its local `packageRules`.
+
 ## Validation
 
-[CI](.github/workflows/validate.yml) runs `actionlint` and validates all three preset files and this repository's `renovate.json` with `renovate-config-validator`.
+[CI](.github/workflows/validate.yml) runs `actionlint` and validates all four preset files and this repository's `renovate.json` with `renovate-config-validator`.
 Check each consuming repository's Renovate configuration with the validator.
